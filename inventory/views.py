@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.db import transaction
-from storefront.models import Product
+from sale.models import Product
 from .models import StockLevel, StockLog
 
 def dashboard(request):

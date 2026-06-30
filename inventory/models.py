@@ -1,5 +1,5 @@
 from django.db import models
-from storefront.models import Product
+from sale.models import Product
 
 class StockLevel(models.Model):
     product = models.OneToOneField(Product, on_delete=models.CASCADE, related_name='stock', verbose_name="สินค้า")

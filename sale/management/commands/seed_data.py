@@ -1,7 +1,7 @@
 from django.core.management.base import BaseCommand
 from django.utils import timezone
 from django.db import transaction
-from storefront.models import Product, Order, OrderItem, Cart, CartItem
+from sale.models import Product, Order, OrderItem, Cart, CartItem
 from inventory.models import StockLevel, StockLog
 from marketing.models import Coupon, LoyaltyAccount
 from logistics.models import Shipment

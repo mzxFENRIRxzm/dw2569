@@ -9,7 +9,7 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('storefront', '0001_initial'),
+        ('sale', '0001_initial'),
     ]
 
     operations = [
@@ -20,7 +20,7 @@ class Migration(migrations.Migration):
                 ('quantity', models.IntegerField(default=0, verbose_name='จำนวนคงเหลือ')),
                 ('location', models.CharField(default='A-1', max_length=100, verbose_name='ตำแหน่งชั้นวาง')),
                 ('reorder_point', models.IntegerField(default=5, verbose_name='จุดแจ้งเตือนสินค้าเหลือน้อย')),
-                ('product', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, related_name='stock', to='storefront.product', verbose_name='สินค้า')),
+                ('product', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, related_name='stock', to='sale.product', verbose_name='สินค้า')),
             ],
         ),
         migrations.CreateModel(
@@ -31,7 +31,7 @@ class Migration(migrations.Migration):
                 ('log_type', models.CharField(choices=[('inbound', 'รับเข้าสินค้า'), ('outbound', 'นำสินค้าออก'), ('adjustment', 'ปรับปรุงยอดสต็อก')], max_length=20, verbose_name='ประเภทรายการ')),
                 ('reason', models.CharField(blank=True, max_length=255, verbose_name='เหตุผล/บันทึกเพิ่มเติม')),
                 ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='เวลาทำรายการ')),
-                ('product', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='storefront.product', verbose_name='สินค้า')),
+                ('product', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='sale.product', verbose_name='สินค้า')),
             ],
         ),
     ]

@@ -53,8 +53,8 @@ class Migration(migrations.Migration):
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('price', models.DecimalField(decimal_places=2, max_digits=10)),
                 ('quantity', models.PositiveIntegerField(default=1)),
-                ('order', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='items', to='storefront.order')),
-                ('product', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='storefront.product')),
+                ('order', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='items', to='sale.order')),
+                ('product', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='sale.product')),
             ],
         ),
         migrations.CreateModel(
@@ -62,8 +62,8 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('quantity', models.PositiveIntegerField(default=1)),
-                ('cart', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='items', to='storefront.cart')),
-                ('product', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='storefront.product')),
+                ('cart', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='items', to='sale.cart')),
+                ('product', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='sale.product')),
             ],
         ),
     ]

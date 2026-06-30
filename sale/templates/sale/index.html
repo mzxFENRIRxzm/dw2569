@@ -46,7 +46,7 @@
                         </div>
                         
                         {% if product.stock.quantity > 0 %}
-                            <a href="{% url 'storefront:add_to_cart' product.id %}" class="btn btn-primary" style="width: 100%;">
+                            <a href="{% url 'sale:add_to_cart' product.id %}" class="btn btn-primary" style="width: 100%;">
                                 <i class="fa-solid fa-cart-plus"></i> เพิ่มลงตะกร้า
                             </a>
                         {% else %}
@@ -85,7 +85,7 @@
                         </div>
                         <div style="display: flex; align-items: center; gap: 0.5rem;">
                             <span style="font-weight: 600; font-size: 0.95rem; color: var(--text-primary);">฿{{ item.subtotal }}</span>
-                            <a href="{% url 'storefront:remove_from_cart' item.id %}" style="color: var(--color-danger); font-size: 0.85rem;" title="ลบสินค้า">
+                            <a href="{% url 'sale:remove_from_cart' item.id %}" style="color: var(--color-danger); font-size: 0.85rem;" title="ลบสินค้า">
                                 <i class="fa-solid fa-trash-can"></i>
                             </a>
                         </div>
@@ -94,7 +94,7 @@
             </div>
             
             <!-- ใช้คูปองส่วนลด -->
-            <form action="{% url 'storefront:apply_coupon' %}" method="post" style="margin-bottom: 1.5rem; border-bottom: 1px solid var(--border-color); padding-bottom: 1.5rem;">
+            <form action="{% url 'sale:apply_coupon' %}" method="post" style="margin-bottom: 1.5rem; border-bottom: 1px solid var(--border-color); padding-bottom: 1.5rem;">
                 {% csrf_token %}
                 <label class="form-label" for="coupon_input">คูปองส่วนลด</label>
                 <div style="display: flex; gap: 0.5rem;">
@@ -136,7 +136,7 @@
             
             <!-- ฟอร์มการชำระเงิน (Checkout) -->
             <h3 style="font-size: 1.1rem; margin-bottom: 1rem;"><i class="fa-solid fa-user-pen"></i> รายละเอียดการจัดส่งและชำระเงิน</h3>
-            <form action="{% url 'storefront:checkout' %}" method="post">
+            <form action="{% url 'sale:checkout' %}" method="post">
                 {% csrf_token %}
                 <div class="form-group">
                     <label class="form-label" for="customer_name">ชื่อ-นามสกุลผู้รับ</label>

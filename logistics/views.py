@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from .models import Shipment
-from storefront.models import Order
+from sale.models import Order
 
 def dashboard(request):
     if request.method == 'POST':

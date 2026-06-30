@@ -13,14 +13,14 @@
 
     <header>
         <div class="navbar">
-            <a href="{% url 'storefront:index' %}" class="brand">
+            <a href="{% url 'sale:index' %}" class="brand">
                 <i class="fa-solid fa-cube"></i> Suphasan
             </a>
             
             <ul class="nav-links">
                 <!-- Check request path to highlight the active menu item -->
-                <li class="{% if request.path == '/' or 'storefront' in request.path %}active{% endif %}">
-                    <a href="{% url 'storefront:index' %}">
+                <li class="{% if request.path == '/' or 'sale' in request.path %}active{% endif %}">
+                    <a href="{% url 'sale:index' %}">
                         <i class="fa-solid fa-store"></i> หน้าเว็บขาย
                     </a>
                 </li>

@@ -9,7 +9,7 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('storefront', '0001_initial'),
+        ('sale', '0001_initial'),
     ]
 
     operations = [
@@ -22,7 +22,7 @@ class Migration(migrations.Migration):
                 ('shipping_cost', models.DecimalField(decimal_places=2, max_digits=10, verbose_name='ค่าจัดส่ง')),
                 ('status', models.CharField(choices=[('preparing', 'กำลังเตรียมสินค้า'), ('shipping', 'อยู่ระหว่างจัดส่ง'), ('delivered', 'จัดส่งสำเร็จ'), ('returned', 'ส่งคืนสินค้า')], default='preparing', max_length=20, verbose_name='สถานะขนส่ง')),
                 ('updated_at', models.DateTimeField(auto_now=True, verbose_name='อัปเดตล่าสุดเมื่อ')),
-                ('order', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, related_name='shipment', to='storefront.order', verbose_name='ออเดอร์')),
+                ('order', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, related_name='shipment', to='sale.order', verbose_name='ออเดอร์')),
             ],
         ),
     ]

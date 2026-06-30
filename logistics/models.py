@@ -1,5 +1,5 @@
 from django.db import models
-from storefront.models import Order
+from sale.models import Order
 
 class Shipment(models.Model):
     STATUS_CHOICES = [

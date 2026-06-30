@@ -64,7 +64,7 @@ def index(request):
         'total_with_shipping': final_price + shipping_cost,
         'coupon': coupon,
     }
-    return render(request, 'storefront/index.html', context)
+    return render(request, 'sale/index.html', context)
 
 def add_to_cart(request, product_id):
     product = get_object_or_404(Product, id=product_id)
@@ -78,7 +78,7 @@ def add_to_cart(request, product_id):
         
     if available <= 0:
         messages.error(request, f"ขออภัย สินค้า {product.name} หมดสต็อก")
-        return redirect('storefront:index')
+        return redirect('sale:index')
         
     cart = get_or_create_cart(request)
     cart_item, created = CartItem.objects.get_or_create(cart=cart, product=product)
@@ -86,20 +86,20 @@ def add_to_cart(request, product_id):
     if not created:
         if cart_item.quantity + 1 > available:
             messages.error(request, f"ขออภัย สินค้าในสต็อกไม่พอ (มีสินค้าพร้อมส่ง {available} ชิ้น)")
-            return redirect('storefront:index')
+            return redirect('sale:index')
         cart_item.quantity += 1
         cart_item.save()
     else:
         messages.success(request, f"เพิ่ม {product.name} ลงตะกร้าแล้ว")
         
-    return redirect('storefront:index')
+    return redirect('sale:index')
 
 def remove_from_cart(request, item_id):
     cart_item = get_object_or_404(CartItem, id=item_id)
     product_name = cart_item.product.name
     cart_item.delete()
     messages.success(request, f"ลบ {product_name} ออกจากตะกร้าแล้ว")
-    return redirect('storefront:index')
+    return redirect('sale:index')
 
 def apply_coupon(request):
     if request.method == 'POST':
@@ -107,7 +107,7 @@ def apply_coupon(request):
         if not code:
             request.session['coupon_code'] = None
             messages.info(request, "ยกเลิกคูปองแล้ว")
-            return redirect('storefront:index')
+            return redirect('sale:index')
             
         try:
             coupon = Coupon.objects.get(code=code, active=True, start_date__lte=timezone.now(), end_date__gte=timezone.now())
@@ -117,14 +117,14 @@ def apply_coupon(request):
             messages.error(request, "ไม่พบคูปองนี้ หรือคูปองหมดอายุการใช้งาน")
             request.session['coupon_code'] = None
             
-    return redirect('storefront:index')
+    return redirect('sale:index')
 
 def checkout(request):
     if request.method == 'POST':
         cart = get_or_create_cart(request)
         if not cart.items.exists():
             messages.error(request, "ไม่มีสินค้าในตะกร้า")
-            return redirect('storefront:index')
+            return redirect('sale:index')
             
         customer_name = request.POST.get('customer_name')
         email = request.POST.get('email')
@@ -227,10 +227,10 @@ def checkout(request):
                 
                 messages.success(request, f"สั่งซื้อสินค้าและชำระเงินเรียบร้อยแล้ว! หมายเลขคำสั่งซื้อของคุณคือ #{order.id}")
                 messages.info(request, f"เลขติดตามพัสดุของคุณคือ: {tracking} (จัดส่งโดย Flash Express)")
-                return redirect('storefront:index')
+                return redirect('sale:index')
                 
         except ValueError as e:
             messages.error(request, str(e))
-            return redirect('storefront:index')
+            return redirect('sale:index')
             
-    return redirect('storefront:index')
+    return redirect('sale:index')
