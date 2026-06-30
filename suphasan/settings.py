@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'inventory',
     'marketing',
     'logistics',
+    'analytics',
 ]
 
 MIDDLEWARE = [
@@ -76,10 +77,12 @@ WSGI_APPLICATION = 'suphasan.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
+import os
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'NAME': os.environ.get('DJANGO_DB_PATH', BASE_DIR / 'data' / 'db.sqlite3'),
         'OPTIONS': {
             'timeout': 30,
         },
@@ -131,3 +134,10 @@ MEDIA_ROOT = BASE_DIR / 'media'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# ClickHouse Settings
+CLICKHOUSE_HOST = 'clickhouse'
+CLICKHOUSE_PORT = 8123
+CLICKHOUSE_USER = 'default'
+CLICKHOUSE_PASSWORD = 'clickhouse'
+CLICKHOUSE_DB = 'default'

@@ -1,0 +1,195 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}ClickHouse Analytics Dashboard - Suphasan{% endblock %}
+
+{% block content %}
+<h1><i class="fa-solid fa-chart-line"></i> ClickHouse Analytics Dashboard</h1>
+<p class="subtitle">Real-time analytics powered by ClickHouse data warehouse</p>
+
+<div class="stats-grid">
+    {% if sales_overview %}
+    <div class="card">
+        <h2><i class="fa-solid fa-chart-simple"></i> Sales Overview (Last 30 Days)</h2>
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Orders</th>
+                        <th>Revenue</th>
+                        <th>Units Sold</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in sales_overview %}
+                    <tr>
+                        <td>{{ row.0 }}</td>
+                        <td>{{ row.1 }}</td>
+                        <td>{{ row.2|floatformat:2 }}</td>
+                        <td>{{ row.3 }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% endif %}
+
+    {% if top_products %}
+    <div class="card">
+        <h2><i class="fa-solid fa-crown"></i> Top Products</h2>
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Qty Sold</th>
+                        <th>Revenue</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in top_products %}
+                    <tr>
+                        <td>{{ row.0 }}</td>
+                        <td>{{ row.1 }}</td>
+                        <td>{{ row.2|floatformat:2 }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% endif %}
+
+    {% if low_stock %}
+    <div class="card">
+        <h2><i class="fa-solid fa-triangle-exclamation" style="color: #dc3545;"></i> Low Stock Alerts</h2>
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>SKU</th>
+                        <th>Stock</th>
+                        <th>Reorder At</th>
+                        <th>Location</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in low_stock %}
+                    <tr>
+                        <td>{{ row.0 }}</td>
+                        <td>{{ row.1 }}</td>
+                        <td style="color: {% if row.2 == 0 %}red{% else %}orange{% endif %}; font-weight: bold;">{{ row.2 }}</td>
+                        <td>{{ row.3 }}</td>
+                        <td>{{ row.4 }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% endif %}
+
+    {% if inventory_summary %}
+    <div class="card">
+        <h2><i class="fa-solid fa-box"></i> Inventory Activity</h2>
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Type</th>
+                        <th>Entries</th>
+                        <th>Total Change</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in inventory_summary %}
+                    <tr>
+                        <td>{{ row.0 }}</td>
+                        <td>{{ row.1 }}</td>
+                        <td>{{ row.2 }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% endif %}
+
+    {% if active_coupons %}
+    <div class="card">
+        <h2><i class="fa-solid fa-tags"></i> Active Coupons</h2>
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Code</th>
+                        <th>Type</th>
+                        <th>Value</th>
+                        <th>Min Purchase</th>
+                        <th>Expires</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in active_coupons %}
+                    <tr>
+                        <td><strong>{{ row.0 }}</strong></td>
+                        <td>{{ row.1 }}</td>
+                        <td>{{ row.2|floatformat:2 }}</td>
+                        <td>{{ row.3|floatformat:2 }}</td>
+                        <td>{{ row.4 }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% endif %}
+
+    {% if shipment_status %}
+    <div class="card">
+        <h2><i class="fa-solid fa-truck"></i> Shipment Status</h2>
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Status</th>
+                        <th>Count</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in shipment_status %}
+                    <tr>
+                        <td>{{ row.0 }}</td>
+                        <td>{{ row.1 }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% endif %}
+
+    {% if loyalty_summary %}
+    <div class="card">
+        <h2><i class="fa-solid fa-star"></i> Loyalty Program</h2>
+        <div class="kpi-grid">
+            <div class="kpi">
+                <span class="kpi-value">{{ loyalty_summary.0 }}</span>
+                <span class="kpi-label">Total Members</span>
+            </div>
+            <div class="kpi">
+                <span class="kpi-value">{{ loyalty_summary.1 }}</span>
+                <span class="kpi-label">Total Points</span>
+            </div>
+            <div class="kpi">
+                <span class="kpi-value">{{ loyalty_summary.2|floatformat:0 }}</span>
+                <span class="kpi-label">Avg Points</span>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

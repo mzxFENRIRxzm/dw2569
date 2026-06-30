@@ -39,6 +39,11 @@
                         <i class="fa-solid fa-truck-fast"></i> การขนส่ง
                     </a>
                 </li>
+                <li class="{% if 'analytics' in request.path %}active{% endif %}">
+                    <a href="{% url 'analytics:dashboard' %}">
+                        <i class="fa-solid fa-chart-line"></i> Analytics
+                    </a>
+                </li>
             </ul>
         </div>
     </header>
