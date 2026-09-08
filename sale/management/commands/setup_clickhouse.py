@@ -94,4 +94,17 @@ class Command(BaseCommand):
             ORDER BY (shipment_id)
         ''')
 
+        client.command('''
+            CREATE TABLE IF NOT EXISTS movie_ratings (
+                movie_id UInt64,
+                movie_title String,
+                release_year UInt16,
+                genre LowCardinality(String),
+                rating Float32,
+                vote_count UInt32,
+                rated_at DateTime DEFAULT now()
+            ) ENGINE = ReplacingMergeTree(rated_at)
+            ORDER BY (movie_id, rated_at)
+        ''')
+
         self.stdout.write(self.style.SUCCESS('ClickHouse tables created/verified successfully'))

@@ -20,15 +20,17 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.views.generic import RedirectView
 from django.http import HttpResponse
+from analytics import views as analytics_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', RedirectView.as_view(pattern_name='sale:index', permanent=False)),
+    path('', analytics_views.dashboard, name='home'),
     path('sale/', include('sale.urls')),
     path('inventory/', include('inventory.urls')),
     path('marketing/', include('marketing.urls')),
     path('logistics/', include('logistics.urls')),
     path('analytics/', include('analytics.urls')),
+    path('dashboard/', analytics_views.dashboard, name='dashboard'),
 ]
 
 urlpatterns += [

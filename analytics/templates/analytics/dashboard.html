@@ -1,195 +1,96 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}ClickHouse Analytics Dashboard - Suphasan{% endblock %}
+{% block title %}MoviePulse - Movie ratings{% endblock %}
 
 {% block content %}
-<h1><i class="fa-solid fa-chart-line"></i> ClickHouse Analytics Dashboard</h1>
-<p class="subtitle">Real-time analytics powered by ClickHouse data warehouse</p>
-
-<div class="stats-grid">
-    {% if sales_overview %}
-    <div class="card">
-        <h2><i class="fa-solid fa-chart-simple"></i> Sales Overview (Last 30 Days)</h2>
-        <div class="table-responsive">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Date</th>
-                        <th>Orders</th>
-                        <th>Revenue</th>
-                        <th>Units Sold</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for row in sales_overview %}
-                    <tr>
-                        <td>{{ row.0 }}</td>
-                        <td>{{ row.1 }}</td>
-                        <td>{{ row.2|floatformat:2 }}</td>
-                        <td>{{ row.3 }}</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+<div class="movie-dashboard" id="movie-dashboard" data-source="{{ dashboard.source }}">
+    <div class="dashboard-heading">
+        <div>
+            <p class="eyebrow"><span class="live-dot"></span> Real-time ratings intelligence</p>
+            <h1>Movie<span class="heading-accent">Pulse</span></h1>
+            <p class="subtitle">A living view of what audiences are watching, rating, and remembering.</p>
         </div>
+        <div class="sync-status"><span id="sync-label">Synced just now</span><span class="source-pill" id="source-label">{{ dashboard.source }}</span></div>
     </div>
-    {% endif %}
 
-    {% if top_products %}
-    <div class="card">
-        <h2><i class="fa-solid fa-crown"></i> Top Products</h2>
-        <div class="table-responsive">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Product</th>
-                        <th>Qty Sold</th>
-                        <th>Revenue</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for row in top_products %}
-                    <tr>
-                        <td>{{ row.0 }}</td>
-                        <td>{{ row.1 }}</td>
-                        <td>{{ row.2|floatformat:2 }}</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-    </div>
-    {% endif %}
+    <section class="movie-spotlight">
+        <div class="spotlight-copy"><p class="panel-kicker">Tonight's signal</p><h2 id="spotlight-title">{{ dashboard.movies.0.title }}</h2><p>คะแนนจากผู้ชมกำลังพุ่งขึ้นในหมวด <span id="spotlight-genre-copy">{{ dashboard.movies.0.genre }}</span> หนังที่ถูกพูดถึงมากที่สุดในตอนนี้</p><div class="spotlight-meta"><span class="hero-score"><i class="fa-solid fa-star"></i> <span id="spotlight-rating">{{ dashboard.movies.0.rating }}</span></span><span id="spotlight-year">{{ dashboard.movies.0.year }}</span><span id="spotlight-genre">{{ dashboard.movies.0.genre }}</span></div><a href="#top-rated" class="spotlight-button">Explore ratings <i class="fa-solid fa-arrow-right"></i></a></div>
+        <div class="spotlight-poster"><img id="spotlight-poster" src="{{ dashboard.movies.0.poster }}" alt="{{ dashboard.movies.0.title }} poster"><span class="spotlight-stamp">TOP<br>RATED</span></div>
+    </section>
 
-    {% if low_stock %}
-    <div class="card">
-        <h2><i class="fa-solid fa-triangle-exclamation" style="color: #dc3545;"></i> Low Stock Alerts</h2>
-        <div class="table-responsive">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Product</th>
-                        <th>SKU</th>
-                        <th>Stock</th>
-                        <th>Reorder At</th>
-                        <th>Location</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for row in low_stock %}
-                    <tr>
-                        <td>{{ row.0 }}</td>
-                        <td>{{ row.1 }}</td>
-                        <td style="color: {% if row.2 == 0 %}red{% else %}orange{% endif %}; font-weight: bold;">{{ row.2 }}</td>
-                        <td>{{ row.3 }}</td>
-                        <td>{{ row.4 }}</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-    </div>
-    {% endif %}
+    <section class="add-rating-panel" aria-label="Add movie rating">
+        <div><p class="panel-kicker">Live input</p><h2>Add a movie rating</h2><p>เปิด dashboard อีกแท็บไว้ แล้วเพิ่มข้อมูลจากฟอร์มนี้ ข้อมูลจะแสดงทันทีโดยไม่ใช้ polling</p></div>
+        <form id="rating-form" class="rating-form" method="post" action="{% url 'analytics:dashboard_data' %}">
+            {% csrf_token %}<input name="title" placeholder="Movie title (same title = update)" required><select name="genre"><option>Drama</option><option>Action</option><option>Comedy</option><option>Sci-Fi</option><option>Thriller</option><option>Romance</option><option>Adventure</option></select><input name="year" type="number" min="1888" max="2100" value="2024" required><input name="rating" type="number" min="0" max="10" step="0.1" value="8.0" required><input name="votes" type="number" min="1" value="100" required><button class="spotlight-button" type="submit"><i class="fa-solid fa-plus"></i> Save rating</button>
+        </form><span class="form-status" id="form-status" role="status"></span>
+    </section>
 
-    {% if inventory_summary %}
-    <div class="card">
-        <h2><i class="fa-solid fa-box"></i> Inventory Activity</h2>
-        <div class="table-responsive">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Type</th>
-                        <th>Entries</th>
-                        <th>Total Change</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for row in inventory_summary %}
-                    <tr>
-                        <td>{{ row.0 }}</td>
-                        <td>{{ row.1 }}</td>
-                        <td>{{ row.2 }}</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-    </div>
-    {% endif %}
+    <section class="poster-section" id="top-rated"><div class="poster-heading"><div><p class="panel-kicker">Curated by the audience</p><h2>Top rated this week</h2></div><button class="refresh-button" type="button" id="refresh-button" title="Refresh dashboard"><i class="fa-solid fa-rotate"></i> Refresh</button></div><div class="poster-rail" id="poster-rail">{% for movie in dashboard.movies %}<article class="poster-card"><div class="poster-art"><img src="{{ movie.poster }}" alt="{{ movie.title }} poster" loading="lazy"><span class="poster-score"><i class="fa-solid fa-star"></i> {{ movie.rating }}</span><span class="poster-rank">0{{ forloop.counter }}</span></div><h3>{{ movie.title }}</h3><p>{{ movie.year }} <span>•</span> {{ movie.genre }}</p></article>{% endfor %}</div></section>
 
-    {% if active_coupons %}
-    <div class="card">
-        <h2><i class="fa-solid fa-tags"></i> Active Coupons</h2>
-        <div class="table-responsive">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Code</th>
-                        <th>Type</th>
-                        <th>Value</th>
-                        <th>Min Purchase</th>
-                        <th>Expires</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for row in active_coupons %}
-                    <tr>
-                        <td><strong>{{ row.0 }}</strong></td>
-                        <td>{{ row.1 }}</td>
-                        <td>{{ row.2|floatformat:2 }}</td>
-                        <td>{{ row.3|floatformat:2 }}</td>
-                        <td>{{ row.4 }}</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-    </div>
-    {% endif %}
+    <section class="movie-kpis" aria-label="Movie rating summary">
+        <article class="movie-kpi accent-pink"><span class="kpi-icon"><i class="fa-solid fa-film"></i></span><div><span class="kpi-label">Movies tracked</span><strong id="kpi-movies">{{ dashboard.kpis.movies|floatformat:0 }}</strong><small>across all genres</small></div></article>
+        <article class="movie-kpi accent-gold"><span class="kpi-icon"><i class="fa-solid fa-star"></i></span><div><span class="kpi-label">Average rating</span><strong id="kpi-average">{{ dashboard.kpis.average }}</strong><small>out of 10.0</small></div></article>
+        <article class="movie-kpi accent-blue"><span class="kpi-icon"><i class="fa-solid fa-users"></i></span><div><span class="kpi-label">Total votes</span><strong id="kpi-votes">{{ dashboard.kpis.votes|floatformat:0 }}</strong><small>audience signals</small></div></article>
+        <article class="movie-kpi accent-green"><span class="kpi-icon"><i class="fa-solid fa-trophy"></i></span><div><span class="kpi-label">Top genre</span><strong id="kpi-genre">{{ dashboard.kpis.top_genre }}</strong><small>highest average score</small></div></article>
+    </section>
 
-    {% if shipment_status %}
-    <div class="card">
-        <h2><i class="fa-solid fa-truck"></i> Shipment Status</h2>
-        <div class="table-responsive">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Status</th>
-                        <th>Count</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for row in shipment_status %}
-                    <tr>
-                        <td>{{ row.0 }}</td>
-                        <td>{{ row.1 }}</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-    </div>
-    {% endif %}
+    <section class="dashboard-grid">
+        <article class="movie-panel trend-panel"><div class="panel-heading"><div><p class="panel-kicker">Audience mood</p><h2>Rating momentum</h2></div><span class="panel-note">Last 6 months</span></div><div class="trend-chart" id="trend-chart">{% for item in dashboard.trend %}<div class="trend-column"><span class="trend-value">{{ item.average }}</span><div class="trend-bar" style="height: {{ item.average|floatformat:0 }}0%;"><i></i></div><span class="trend-label">{{ item.month }}</span></div>{% endfor %}</div></article>
+        <article class="movie-panel genre-panel"><div class="panel-heading"><div><p class="panel-kicker">By category</p><h2>Genre landscape</h2></div><i class="fa-solid fa-chart-pie panel-icon"></i></div><div class="genre-list" id="genre-list">{% for item in dashboard.genres %}<div class="genre-row"><div class="genre-meta"><span>{{ item.name }}</span><b>{{ item.average }}</b></div><div class="genre-track"><i style="width: {{ item.count|floatformat:0 }}%;"></i></div><small>{{ item.count }} movies</small></div>{% endfor %}</div></article>
+    </section>
 
-    {% if loyalty_summary %}
-    <div class="card">
-        <h2><i class="fa-solid fa-star"></i> Loyalty Program</h2>
-        <div class="kpi-grid">
-            <div class="kpi">
-                <span class="kpi-value">{{ loyalty_summary.0 }}</span>
-                <span class="kpi-label">Total Members</span>
-            </div>
-            <div class="kpi">
-                <span class="kpi-value">{{ loyalty_summary.1 }}</span>
-                <span class="kpi-label">Total Points</span>
-            </div>
-            <div class="kpi">
-                <span class="kpi-value">{{ loyalty_summary.2|floatformat:0 }}</span>
-                <span class="kpi-label">Avg Points</span>
-            </div>
-        </div>
-    </div>
-    {% endif %}
+    <section class="movie-panel table-panel"><div class="panel-heading"><div><p class="panel-kicker">Editor's radar</p><h2>Rating ledger</h2></div></div><div class="movie-table-wrap"><table class="movie-table"><thead><tr><th>Movie</th><th>Genre</th><th>Year</th><th>Audience score</th><th>Votes</th></tr></thead><tbody id="movie-table-body">{% for movie in dashboard.movies %}<tr><td><span class="movie-rank">{{ forloop.counter|stringformat:'02d' }}</span><strong>{{ movie.title }}</strong></td><td><span class="genre-tag">{{ movie.genre }}</span></td><td>{{ movie.year }}</td><td><span class="score"><i class="fa-solid fa-star"></i> {{ movie.rating }}</span></td><td>{{ movie.votes|floatformat:0 }}</td></tr>{% endfor %}</tbody></table></div></section>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+(() => {
+    const endpoint = "{% url 'analytics:dashboard_data' %}";
+    const dashboard = document.getElementById('movie-dashboard');
+    const number = value => Number(value || 0).toLocaleString('en-US');
+    const render = data => {
+        document.getElementById('kpi-movies').textContent = number(data.kpis.movies);
+        document.getElementById('kpi-average').textContent = data.kpis.average;
+        document.getElementById('kpi-votes').textContent = number(data.kpis.votes);
+        document.getElementById('kpi-genre').textContent = data.kpis.top_genre;
+        document.getElementById('source-label').textContent = data.source;
+        document.getElementById('sync-label').textContent = 'Synced just now';
+        dashboard.dataset.source = data.source;
+        if (data.movies.length) {
+            const featured = data.movies[0];
+            document.getElementById('spotlight-title').textContent = featured.title;
+            document.getElementById('spotlight-rating').textContent = featured.rating;
+            document.getElementById('spotlight-year').textContent = featured.year;
+            document.getElementById('spotlight-genre').textContent = featured.genre;
+            document.getElementById('spotlight-genre-copy').textContent = featured.genre;
+            document.getElementById('spotlight-poster').src = featured.poster;
+            document.getElementById('spotlight-poster').alt = `${featured.title} poster`;
+        }
+        document.getElementById('poster-rail').innerHTML = data.movies.map((movie, index) => `<article class="poster-card"><div class="poster-art"><img src="${movie.poster}" alt="${movie.title} poster" loading="lazy"><span class="poster-score"><i class="fa-solid fa-star"></i> ${movie.rating}</span><span class="poster-rank">${String(index + 1).padStart(2, '0')}</span></div><h3>${movie.title}</h3><p>${movie.year} <span>•</span> ${movie.genre}</p></article>`).join('');
+        document.getElementById('movie-table-body').innerHTML = data.movies.map((movie, index) => `<tr><td><span class="movie-rank">${String(index + 1).padStart(2, '0')}</span><strong>${movie.title}</strong></td><td><span class="genre-tag">${movie.genre}</span></td><td>${movie.year}</td><td><span class="score"><i class="fa-solid fa-star"></i> ${movie.rating}</span></td><td>${number(movie.votes)}</td></tr>`).join('');
+    };
+    const refresh = () => fetch(endpoint).then(response => response.json()).then(render).catch(() => { document.getElementById('sync-label').textContent = 'Waiting for data'; });
+    document.getElementById('refresh-button').addEventListener('click', refresh);
+    const liveChannel = 'BroadcastChannel' in window ? new BroadcastChannel('moviepulse-ratings') : null;
+    const receiveUpdate = () => refresh();
+    if (liveChannel) liveChannel.addEventListener('message', receiveUpdate);
+    window.addEventListener('storage', event => { if (event.key === 'moviepulse-rating-event') receiveUpdate(); });
+    document.getElementById('rating-form').addEventListener('submit', event => {
+        event.preventDefault();
+        const form = event.currentTarget;
+        fetch(form.action, { method: 'POST', body: new FormData(form), credentials: 'same-origin' })
+            .then(response => response.json().then(data => ({ ok: response.ok, data })))
+            .then(({ ok, data }) => {
+                if (!ok) throw new Error(data.error || 'Unable to save rating');
+                refresh();
+                if (liveChannel) liveChannel.postMessage({ type: 'rating-added', movie: data.movie });
+                localStorage.setItem('moviepulse-rating-event', String(Date.now()));
+                document.getElementById('form-status').textContent = 'Rating added. Other dashboards updated.';
+                form.reset();
+            }).catch(error => { document.getElementById('form-status').textContent = error.message; });
+    });
+})();
+</script>
 {% endblock %}

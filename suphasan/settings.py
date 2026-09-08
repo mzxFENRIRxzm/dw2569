@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-#-mtv6t08r4s+8s3zo7e^+)k-$r+!-l1*kr)qx77s-0f5==$4-
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'testserver']
 
 
 # Application definition
@@ -135,9 +135,9 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# ClickHouse Settings
-CLICKHOUSE_HOST = 'clickhouse'
-CLICKHOUSE_PORT = 8123
-CLICKHOUSE_USER = 'default'
-CLICKHOUSE_PASSWORD = 'clickhouse'
-CLICKHOUSE_DB = 'default'
+# ClickHouse Settings. Override these values when using Docker or a local server.
+CLICKHOUSE_HOST = os.environ.get('CLICKHOUSE_HOST', 'localhost')
+CLICKHOUSE_PORT = int(os.environ.get('CLICKHOUSE_PORT', '8123'))
+CLICKHOUSE_USER = os.environ.get('CLICKHOUSE_USER', 'default')
+CLICKHOUSE_PASSWORD = os.environ.get('CLICKHOUSE_PASSWORD', '')
+CLICKHOUSE_DB = os.environ.get('CLICKHOUSE_DB', 'default')

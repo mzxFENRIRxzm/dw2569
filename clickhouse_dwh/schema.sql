@@ -4,6 +4,18 @@ CREATE DATABASE IF NOT EXISTS dwh_suphasan;
 
 USE dwh_suphasan;
 
+-- Movie ratings dashboard fact table (one row per movie snapshot)
+CREATE TABLE IF NOT EXISTS movie_ratings (
+    movie_id UInt64,
+    movie_title String,
+    release_year UInt16,
+    genre LowCardinality(String),
+    rating Float32,
+    vote_count UInt32,
+    rated_at DateTime DEFAULT now()
+) ENGINE = ReplacingMergeTree(rated_at)
+ORDER BY (movie_id, rated_at);
+
 -- ==============================================
 -- 1. Dimension Tables
 -- ==============================================

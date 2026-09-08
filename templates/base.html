@@ -13,15 +13,15 @@
 
     <header>
         <div class="navbar">
-            <a href="{% url 'sale:index' %}" class="brand">
-                <i class="fa-solid fa-cube"></i> Suphasan
+            <a href="{% url 'home' %}" class="brand">
+                <i class="fa-solid fa-film"></i> MoviePulse
             </a>
             
             <ul class="nav-links">
                 <!-- Check request path to highlight the active menu item -->
-                <li class="{% if request.path == '/' or 'sale' in request.path %}active{% endif %}">
-                    <a href="{% url 'sale:index' %}">
-                        <i class="fa-solid fa-store"></i> หน้าเว็บขาย
+                <li class="{% if request.path == '/' or 'dashboard' in request.path or 'analytics' in request.path %}active{% endif %}">
+                    <a href="{% url 'home' %}">
+                        <i class="fa-solid fa-chart-line"></i> Movie ratings
                     </a>
                 </li>
                 <li class="{% if 'inventory' in request.path %}active{% endif %}">
@@ -39,9 +39,9 @@
                         <i class="fa-solid fa-truck-fast"></i> การขนส่ง
                     </a>
                 </li>
-                <li class="{% if 'analytics' in request.path %}active{% endif %}">
-                    <a href="{% url 'analytics:dashboard' %}">
-                        <i class="fa-solid fa-chart-line"></i> Analytics
+                <li>
+                    <a href="{% url 'sale:index' %}">
+                        <i class="fa-solid fa-store"></i> Storefront
                     </a>
                 </li>
             </ul>
